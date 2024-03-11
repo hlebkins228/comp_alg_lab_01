@@ -1,3 +1,5 @@
+from prettytable import PrettyTable
+
 from comp_functions import *
 from io_functions import *
 
@@ -16,7 +18,8 @@ def action_input() -> int:
 
 
 def print_menu():
-    print("\n0) интерполяция Ньютона и Эрмита\n1) задача 1\n2) задача 2\n3) задача 3\n4) выход\n")
+    print("\n0) интерполяция Ньютона и Эрмита\n1) сравнение полиномов\n"
+          "2) найти корень функции\n3) решить систему уравнений\n4) выход\n")
 
 
 def task_0(data: list[PointValues]):
@@ -38,11 +41,16 @@ def task_0(data: list[PointValues]):
 
 def task_1(data: list[PointValues]):
     user_x = input_value("\nвведите x: ", float, False)
-    print("\n------------------------------")
-    print(f"|    n | {'hermit':8} | {'newton':8} |")
+
+    table = PrettyTable()
+    empty_column = '-----'
+    table.field_names = ['nodes_count', 'hermit', empty_column, 'n', 'newton']
+
     for n in range(1, 6):
-        print(f"| {n:4} | {calculate_ans_hermit(data, user_x, n):7f} | {calculate_ans_newton(data, user_x, n):7f} |")
-    print("------------------------------\n")
+        table.add_row([n, round(calculate_ans_hermit(data, user_x, n), accuracy), empty_column
+                          , n, round(calculate_ans_newton(data, user_x, n), accuracy)])
+
+    print(table)
 
 
 def task_2(data: list[PointValues]):
@@ -59,9 +67,10 @@ def task_3(data_1: list[PointValues], data_2: list[PointValues]):
 
         new_data_table.append(PointValues(x=current_x, derivatives=[y_2 - y_1]))
 
-    ans = newton_reverse_interpolation(new_data_table)
+    ans_x = newton_reverse_interpolation(new_data_table)
+    ans_y = calculate_ans_newton(data_1, ans_x, 4)
 
-    print(f"\nрешение системы уравнений = ({ans}, 0)\n")
+    print(f"\nрешение системы уравнений = ({ans_x}, {ans_y})\n")
 
 
 def main_menu():

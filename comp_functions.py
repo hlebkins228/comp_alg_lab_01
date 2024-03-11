@@ -4,9 +4,6 @@ from config import accuracy
 
 
 def cut_data(function_data_list: list[PointValues], user_x: float, nodes: float) -> list[PointValues] | None:
-    left_shift = None
-    right_shift = None
-
     if nodes % 2 == 0:
         left_shift = nodes // 2
         right_shift = nodes // 2 - 1
@@ -47,7 +44,7 @@ def find_divided_difference_table(function_data_list: list[PointValues], nodes_c
     for i in range(nodes_count):
         item = function_data_list[i]
         y_values.extend([item['derivatives'][0]] * d_count)
-    
+
     divided_difference_table = [y_values]
     is_end = False
     iter_number = 1
@@ -61,15 +58,17 @@ def find_divided_difference_table(function_data_list: list[PointValues], nodes_c
             iter_number += 1
 
     return divided_difference_table
-    
-    
+
+
 def _get_new_column(function_data_list: list[PointValues], prev_column: list, iter_number: int, d_count: int) -> list:
     new_column = list()
     for i in range(len(prev_column) - 1):
         if function_data_list[(i + iter_number) // d_count]['x'] == function_data_list[i // d_count]['x']:
             new_column.append(function_data_list[i // d_count]['derivatives'][iter_number] / factorial(iter_number))
         else:
-            new_column.append((prev_column[i + 1] - prev_column[i]) / (function_data_list[(i + iter_number) // d_count]['x'] - function_data_list[i // d_count]['x']))
+            new_column.append((prev_column[i + 1] - prev_column[i]) / (function_data_list[(i + iter_number)
+                                                                                          // d_count]['x'] -
+                                                                       function_data_list[i // d_count]['x']))
 
     new_column = list(map(lambda x: round(x, accuracy), new_column))
 
@@ -80,14 +79,15 @@ def function_interpolation(z_values: list, divided_difference_table: list, x: fl
     ans = 0
     k_list = [1]
     current_k = 1
- 
+
     for current_x in z_values:
         current_k *= (x - current_x)
         k_list.append(current_k)
-
+    print("--fdg------")
     for i, column in enumerate(divided_difference_table):
+        print(column[0], k_list[i])
         ans += column[0] * k_list[i]
-    
+
     return ans
 
 
@@ -148,4 +148,3 @@ def hermit_reverse_interpolation(data: list[PointValues]) -> float | None:
     ans = calculate_ans_hermit(reverse_data, 0, 4)
 
     return ans
-
